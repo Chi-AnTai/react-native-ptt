@@ -1,30 +1,57 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View, FlatList, SafeAreaView} from 'react-native';
+import Cheerio from 'cheerio-without-node-native'
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
-type Props = {};
 export default class App extends Component<Props> {
+  state = {
+    data: []
+  }
+
+  componentDidMount() {
+    this.fetchPtt()
+  }
+
+  fetchPtt = async() => {
+    let pttFirstPage = await fetch('https://www.ptt.cc/bbs/hotboards.html').then(response=>response.text())
+    const $ = Cheerio.load(pttFirstPage);
+    
+    let result = $('.board').map((index,element)=>{
+      return {
+        englishTitle: $('.board-name',element).text(),
+        title: $('.board-title',element).text(),
+        numberOfUsers: $('.board-nuser span',element).text(),
+        href: element.attribs.href
+      }
+    }).toArray()
+    this.setState({
+      data: result
+    })
+    
+  }
+
+  renderBoard = ({item}) => {
+    return (
+      <View style={{height:40,borderBottomColor:'gray',borderBottomWidth:1}} key={item.englishTitle}>
+        <View style={{flexDirection:'row'}}>
+          <View style={{flex:1}}>
+            <Text>{item.englishTitle}</Text>
+            <Text>{item.title}</Text>
+          </View>
+          <View>
+            <Text>{item.numberOfUsers}</Text>
+          </View>
+        </View>
+      </View>
+    )
+  }
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <FlatList 
+          data={this.state.data}
+          renderItem={this.renderBoard}
+        />
+      </SafeAreaView>
     );
   }
 }
@@ -32,18 +59,7 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  
 });
