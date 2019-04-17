@@ -25,7 +25,9 @@ class APIHelper {
   }
 
   fetchBoard = async(endPoint) => {
-    let rawHtml = await fetch(`${baseURL}${endPoint}`).then(response=>response.text())
+    let rawHtml = await fetch(`${baseURL}${endPoint}`,{
+      credentials: 'include'
+    }).then(response=>response.text())
     const $ = Cheerio.load(rawHtml);
     console.log(rawHtml)
   }
