@@ -1,7 +1,11 @@
-import Cheerio from 'cheerio-without-node-native'
+import Cheerio from 'cheerio-without-node-native';
+import Cookie from 'react-native-cookie';
 const baseURL = 'https://www.ptt.cc';
 
 class APIHelper {
+  constructor() {
+    Cookie.set('https://www.ptt.cc/bbs/Gossiping/index.html', 'over18', 1)
+  }
 
   fetchHotBoards = async() => {
     let pttFirstPage = await fetch(`${baseURL}/hotboards.html`).then(response=>response.text())

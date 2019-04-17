@@ -10,6 +10,7 @@
     "cheerio-without-node-native": "0.20.2",
     "react": "16.8.3",
     "react-native": "0.59.4",
+    "react-native-cookie": "https://github.com/densa/react-native-cookie",
     "react-native-gesture-handler": "^1.1.0",
     "react-navigation": "^3.8.1"
   },
