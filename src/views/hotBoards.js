@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity} from 'react-native';
-import Cheerio from 'cheerio-without-node-native'
+import APIHelper from '../helper/apiHelper';
 
 export default class HotBoards extends Component {
   state = {
@@ -8,32 +8,18 @@ export default class HotBoards extends Component {
   }
 
   componentDidMount() {
-    this.fetchPtt()
+    this.fetchHotBoards()
   }
 
-  fetchPtt = async() => {
-    let pttFirstPage = await fetch('https://www.ptt.cc/bbs/hotboards.html').then(response=>response.text())
-    const $ = Cheerio.load(pttFirstPage);
-    
-    let result = $('.board').map((index,element)=>{
-      return {
-        englishTitle: $('.board-name',element).text(),
-        title: $('.board-title',element).text(),
-        numberOfUsers: $('.board-nuser span',element).text(),
-        href: element.attribs.href,
-        key: index.toString()
-      }
-    }).toArray()
-    this.setState({
-      data: result
-    })
-    
+  fetchHotBoards = async() => {
+    let response = await APIHelper.fetchHotBoards()
+    this.setState({data: response})
   }
     
   renderBoard = ({item}) => {
     return (
       <TouchableOpacity
-        onPress={()=>this.props.navigation.push('Board',item.href)}
+        onPress={()=>this.props.navigation.push('Board',{href: item.href})}
         style={{height:40,borderBottomColor:'gray',borderBottomWidth:1}}
         key={item.index}
       >
