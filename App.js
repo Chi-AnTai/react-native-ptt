@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, SafeAreaView} from 'react-native';
+import {Platform, StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity} from 'react-native';
 import Cheerio from 'cheerio-without-node-native'
 
 export default class App extends Component<Props> {
@@ -20,7 +20,8 @@ export default class App extends Component<Props> {
         englishTitle: $('.board-name',element).text(),
         title: $('.board-title',element).text(),
         numberOfUsers: $('.board-nuser span',element).text(),
-        href: element.attribs.href
+        href: element.attribs.href,
+        key: index.toString()
       }
     }).toArray()
     this.setState({
@@ -31,7 +32,7 @@ export default class App extends Component<Props> {
 
   renderBoard = ({item}) => {
     return (
-      <View style={{height:40,borderBottomColor:'gray',borderBottomWidth:1}} key={item.englishTitle}>
+      <TouchableOpacity style={{height:40,borderBottomColor:'gray',borderBottomWidth:1}} key={item.index}>
         <View style={{flexDirection:'row'}}>
           <View style={{flex:1}}>
             <Text>{item.englishTitle}</Text>
@@ -41,7 +42,7 @@ export default class App extends Component<Props> {
             <Text>{item.numberOfUsers}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     )
   }
   render() {
