@@ -1,66 +1,15 @@
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, FlatList, SafeAreaView, TouchableOpacity} from 'react-native';
-import Cheerio from 'cheerio-without-node-native'
+import React from 'react';
+import { createStackNavigator, createAppContainer } from 'react-navigation';
+import HotBoards from './src/views/hotBoards';
+import Board from './src/views/boards'
 
-export default class App extends Component<Props> {
-  state = {
-    data: []
-  }
-
-  componentDidMount() {
-    this.fetchPtt()
-  }
-
-  fetchPtt = async() => {
-    let pttFirstPage = await fetch('https://www.ptt.cc/bbs/hotboards.html').then(response=>response.text())
-    const $ = Cheerio.load(pttFirstPage);
-    
-    let result = $('.board').map((index,element)=>{
-      return {
-        englishTitle: $('.board-name',element).text(),
-        title: $('.board-title',element).text(),
-        numberOfUsers: $('.board-nuser span',element).text(),
-        href: element.attribs.href,
-        key: index.toString()
-      }
-    }).toArray()
-    this.setState({
-      data: result
-    })
-    
-  }
-
-  renderBoard = ({item}) => {
-    return (
-      <TouchableOpacity style={{height:40,borderBottomColor:'gray',borderBottomWidth:1}} key={item.index}>
-        <View style={{flexDirection:'row'}}>
-          <View style={{flex:1}}>
-            <Text>{item.englishTitle}</Text>
-            <Text>{item.title}</Text>
-          </View>
-          <View>
-            <Text>{item.numberOfUsers}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    )
-  }
+const RootStack = createStackNavigator({
+  HotBoards: HotBoards,
+  Board: Board 
+});
+const AppContainer = createAppContainer(RootStack);
+export default class App extends React.Component {
   render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        <FlatList 
-          data={this.state.data}
-          renderItem={this.renderBoard}
-        />
-      </SafeAreaView>
-    );
+    return <AppContainer />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-  
-});
